@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+# Data is NOT committed — this is a reproducible pipeline, not a dataset.
+# Pick your own SKUs in src/sku_config.py and run the ingest scripts (see README).
+# Results are visible in the notebook's saved outputs (charts render inline).
+data/
+.env
