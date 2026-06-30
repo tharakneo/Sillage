@@ -25,11 +25,13 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = ROOT / "data" / "raw"
 
-# Backtest SKUs + Dior Homme (reformulation case)
+# Backtest SKUs + Dior Homme (reformulation) + 2026 live releases
 TIKTOK_TARGETS = {
     "Bianco Latte": ("bianco_latte", "biancolatte"),
     "Stronger With You Intensely": ("stronger_with_you_intensely", "strongerwithyou"),
     "Dior Homme Parfum": ("dior_homme_parfum", "diorhomme"),
+    "Armani Power of You": ("armani_power_of_you", "armanipowerofyou"),
+    "Valentino Purple Melancholia": ("valentino_purple_melancholia", "purplemelancholia"),
 }
 
 ACTOR_ID = "clockworks/tiktok-scraper"

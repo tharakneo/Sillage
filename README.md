@@ -26,8 +26,21 @@ archetypes:
 | **Bianco Latte** | New viral launch | No sales history, so it forecasts the surge from social signal | 12.3 |
 | **Stronger With You Intensely** | Seasonal gifting | Anticipates the winter spike from learned seasonality | 9.2 |
 | **Dior Homme Parfum** | Reformulation event | Catches the Q1 surge and the Q2 reversion to baseline | 4.3 |
+| **Armani Power of You** | **2026 live launch** | Forecasts a brand-new product the model *never saw*, from early social signal | 13.6 |
 
 *(MAE on the 0 to 100 Google-interest scale.)*
+
+The first three are **backtests** (hold out the event window, train on everything
+else, forecast the held-out window). Armani is the **live application**: a 2026
+release that is *not in the training set at all*, the real test of forecasting a
+product with zero history. Backtests prove the method; the live launch shows it
+working forward. Notebooks: `backtest.ipynb` and `armani_power_of_you_2026_forecast.ipynb`.
+
+This is **V1**, built on free/public proxies. The MAE is already in a usable range and
+would tighten substantially with: **real POS sales** (replacing the Google proxy
+target), **richer Reddit history** (deeper census, more subreddits), and **fuller
+TikTok scraping** as a model feature (computationally heavier, but it's the earliest
+leading signal). The architecture is built to absorb these without changes.
 
 ---
 
@@ -39,6 +52,20 @@ archetypes:
 | Reddit (r/fragrance census) | mentions + VADER sentiment | live buzz; sentiment can lead, volume confirms |
 | TikTok (Apify) | posting velocity | discovery signal (recency-biased, recent only) |
 | Fragrantica | notes / accords → derived season | static product prior (known at launch, no leakage) |
+
+---
+
+## Method
+
+- **Target:** weekly Google Trends interest (demand proxy).
+- **Features:** lagged Reddit signals (*t−1…t−4*), lagged demand, calendar, and a
+  static season prior from Fragrantica accords, all leakage safe. No ratings.
+- **Model:** pooled `GradientBoostingRegressor` trained across all SKUs at once, so it
+  can forecast a new SKU with no history of its own.
+- **Validation:** hold out the event window (or the entire 2026 SKU for Armani), train
+  on the rest, forecast the held out data.
+
+See `notebooks/backtest.ipynb` for the full feature set, hyperparameters, and rationale.
 
 ---
 
@@ -112,7 +139,9 @@ Hyunyoung Choi, Hal Varian)
 - **No ratings used.** Fragrantica ratings accumulate over time and would leak
   future popularity into a launch forecast.
 - **TikTok hashtag data is recency-biased.** Sparse/unreliable for older years,
-  dense only recently.
+  dense only recently. It's shown as a *leading indicator* in the cascade charts but
+  is **not yet a model feature** (the historical training SKUs lack reliable TikTok
+  history); backfilling it across the portfolio is the next step.
 - **Buzz ≠ purchase intent.** The model over-predicts notoriety products like
   Sécrétions Magnifiques (added specifically as a polarizing control), where people
   discuss but don't buy. Real sales data would resolve this.
@@ -124,7 +153,9 @@ Hyunyoung Choi, Hal Varian)
 ```
 sillage/
 ├── src/                  # ingestion + alignment pipeline
-├── notebooks/            # backtest.ipynb (model + forecasts)
+├── notebooks/
+│   ├── backtest.ipynb                          # 3 backtest archetypes + supply plan
+│   └── armani_power_of_you_2026_forecast.ipynb # live 2026 launch forecast + S&OP
 ├── data/                 # (gitignored) raw + processed signals
 ├── run_reddit_distributed.sh
 ├── requirements.txt

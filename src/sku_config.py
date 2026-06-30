@@ -24,7 +24,7 @@ SKU_ALIASES: dict[str, list[str]] = {
     "Secretions Magnifiques": ["secretions magnifiques", "secretions mag", "etat libre secretions"],
 }
 
-# 2026 fresh releases — the live forward-looking demo (separate window: 2026-01-01 → present).
+# 2026 fresh releases, the live forward looking demo (separate window: 2026-01-01 → present).
 # New products have no sales history; rising social signal is the only early demand read.
 SKU_ALIASES_2026: dict[str, list[str]] = {
     "Le Beau Narcisse": [
@@ -45,7 +45,9 @@ SKU_SLUGS_2026: dict[str, str] = {
     "Valentino Purple Melancholia": "valentino_purple_melancholia",
 }
 
-TIMEFRAME_2026 = "2026-01-01 2026-06-30"
+# wide enough (>9 months) that Google Trends returns WEEKLY granularity, not daily.
+# pre-launch months read ~0, which is realistic for a new release.
+TIMEFRAME_2026 = "2025-06-01 2026-06-30"
 
 # TikTok hashtag equivalents
 TIKTOK_HASHTAGS: dict[str, str] = {
